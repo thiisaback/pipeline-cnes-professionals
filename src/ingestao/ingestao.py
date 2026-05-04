@@ -201,7 +201,7 @@ def mapear_arquivos_bucket(bucket:str) -> dict:
     logger_process.info(f'Solicitando lista de arquivos da camada bronze do bucket {bucket} ao servidor do Amazon S3...')
 
     # Consulta os arquivos existentes na camada bronze do bucket
-    resposta_s3 = s3_client.list_objects_v2(Bucket=bucket, Prefix='profissionais/bronze/')
+    resposta_s3 = s3_client.list_objects_v2(Bucket=bucket, Prefix='bronze/cnes/profissionais/')
     logger_process.info(resposta_s3)
     
     if 'Contents' in resposta_s3:
@@ -295,7 +295,7 @@ def transferir_ftp_para_s3(arquivos:list, bucket:str):
                 logger_process.info(f'Baixando arquivo: {arquivo}')
 
                 # Nome do arquivo que será armazenado na camada bronze no bucket
-                nome_objeto = f'profissionais/bronze/{arquivo}'
+                nome_objeto = f'bronze/cnes/profissionais/{arquivo}'
 
                 # Faz o upload do arquivo no bucket do Amazon S3
                 s3_client.upload_fileobj(
