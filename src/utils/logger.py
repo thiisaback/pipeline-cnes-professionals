@@ -1,4 +1,5 @@
 import logging
+import time
 
 def get_logger(nome:str, nivel:str='info', tipo:str='console', caminho:str='log.log'):
     '''
@@ -42,17 +43,19 @@ def get_logger(nome:str, nivel:str='info', tipo:str='console', caminho:str='log.
             # Define o handler de console caso o usuário digite um valor inválido
             handler = logging.StreamHandler()
 
+    # Configura o Formatter para utilizar o fuso horário local
+    logging.Formatter.converter = time.localtime
 
-        # Cria o Formatter
-        formatter = logging.Formatter(
-            fmt='%(asctime)s - %(module)s/%(funcName)s - [%(levelname)s] %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S'
-        )
+    # Cria o Formatter
+    formatter = logging.Formatter(
+        fmt='%(asctime)s - %(module)s/%(funcName)s - [%(levelname)s] %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
 
-        # Adiciona o Formatter ao Handler
-        handler.setFormatter(formatter)
+    # Adiciona o Formatter ao Handler
+    handler.setFormatter(formatter)
 
-        # Adiciona o Handler ao Logger
-        logger.addHandler(handler)
+    # Adiciona o Handler ao Logger
+    logger.addHandler(handler)
 
     return logger
