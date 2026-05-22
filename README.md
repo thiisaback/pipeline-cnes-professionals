@@ -38,10 +38,17 @@ O **PipeSUS** é uma pipeline de dados com arquitetura *serverless* e orientada 
 | `src/lambda/ingestao.py` com a função lambda de ingestão | ✅ |
 | **EventBridge Scheduler** configurado | ✅ |
 | `notebooks/01-lambda-ingestao.ipynb` | ✅ |
-| Logs em JSON configurados na `src/lambda/ingestao.py` | 🔄 |
-| `docs/07-roadmap.md` atualização do andamento do projeto | 🔲 |
-| `README.md` atualização do andamento do projeto | 🔲 |
+| Logs em JSON configurados na `src/lambda/ingestao.py` | ✅ |
+| `README.md` e `docs/07-roadmap.md` com a atualização da próxima etapa do projeto | 🔄 |
 
+
+### Legenda
+
+| Símbolo | Significado |
+|---------|-------------|
+| ✅ | Concluído |
+| 🔲 | Pendente |
+| 🔄 | Em progresso |
 ---
 
 > Quer acessar o roadmap completo? Veja em [Roadmap de Evolução da Pipeline](/docs/07-roadmap.md).

@@ -35,9 +35,8 @@ O roadmap está organizado em 6 fases, seguindo o fluxo natural da pipeline de d
 | `src/lambda/ingestao.py` com a função lambda de ingestão | ✅ |
 | **EventBridge Scheduler** configurado | ✅ |
 | `notebooks/01-lambda-ingestao.ipynb` | ✅ |
-| Logs em JSON configurados na `src/lambda/ingestao.py` | 🔄 |
-| `docs/07-roadmap.md` atualização do andamento do projeto | 🔲 |
-| `README.md` atualização do andamento do projeto | 🔲 |
+| Logs em JSON configurados na `src/lambda/ingestao.py` | ✅ |
+| `README.md` e `docs/07-roadmap.md` com a atualização da próxima etapa do projeto | 🔄 |
 
 ---
 
