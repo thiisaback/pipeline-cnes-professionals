@@ -35,13 +35,12 @@ O **PipeSUS** é uma pipeline de dados com arquitetura *serverless* e orientada 
 
 | Entrega | Status |
 |---------|--------|
-| `src/lambda/ingestao.py` com a função lambda de ingestão | 🔄 |
-| **Logs** configurados na `src/lambda/ingestao.py` | 🔲 |
-| **EventBridge Scheduler** configurado | 🔲 |
-| `notebooks/01-exploracao-ftp-datasus.ipynb` | 🔲 |
-| Infrastrutura de provisionamento no Terraform (IaC) | 🔲 |
-| `README.md` atualização do andamento do projeto | 🔲 |
+| `src/lambda/ingestao.py` com a função lambda de ingestão | ✅ |
+| **EventBridge Scheduler** configurado | ✅ |
+| `notebooks/01-lambda-ingestao.ipynb` | ✅ |
+| Logs em JSON configurados na `src/lambda/ingestao.py` | 🔄 |
 | `docs/07-roadmap.md` atualização do andamento do projeto | 🔲 |
+| `README.md` atualização do andamento do projeto | 🔲 |
 
 ---
 

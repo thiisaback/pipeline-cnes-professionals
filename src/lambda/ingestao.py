@@ -1,4 +1,5 @@
 from ftplib import FTP, error_perm, error_temp
+import os
 from urllib.error import URLError
 import urllib.request
 import boto3
@@ -14,6 +15,10 @@ def mapear_arquivos_ftp() -> dict:
     Returns:
         dict_arquivos(dict): Dicionário com a competência mais recente e a lista de arquivos. 
     '''
+
+    # Identifica o módulo e função atuais para o Log
+    funcao_atual = 'ingestao/mapear_arquivos_ftp'
+
     # Dicionário que armazenará o resultado da função
     dict_arquivos = {}
 
@@ -21,45 +26,46 @@ def mapear_arquivos_ftp() -> dict:
     host = 'ftp.datasus.gov.br'
     dir_pf = 'dissemin/publicos/CNES/200508_/Dados/PF/'
 
-    print(f'Iniciando conexão com o servidor {host}')
+    print(f'[INFO] {funcao_atual} - Iniciando conexão com o servidor {host}')
 
     try:
         with FTP(host) as servidor:
             
             # Acessa o servidor FTP do DataSUS como usuário anônimo
             servidor.login()
-            print('Conexão estabelecida.')
+            print(f'[INFO] {funcao_atual} - Conexão estabelecida.')
 
             # Navega até o diretório que contém as bases de dados
             servidor.cwd(dir_pf)
-            print(f'Navegando para o diretório {dir_pf}')
+            print(f'[INFO] {funcao_atual} - Navegando para o diretório {dir_pf}')
             
             # Armazena no dicionário a competência atual dos arquivos do servidor FTP (formato: aamm)
             dict_arquivos['competencia'] = int(servidor.nlst()[-1][-8:-4])
-            print(f'Competência atual (FTP): {dict_arquivos['competencia']}')
+            print(f'[INFO] {funcao_atual} - Competência atual DataSUS: {dict_arquivos['competencia']}')
 
             # Cria a string de filtragem dos arquivos
             filtro = '*' + str(dict_arquivos['competencia']) + '.dbc'
-            print(f'String de filtro criada: {filtro}')
+            print(f'[INFO] {funcao_atual} - String de filtro criada: {filtro}')
 
             # Armazena no dicionário a lista com os arquivos da competência mais atual do servidor FTP
             dict_arquivos['arquivos'] = servidor.nlst(filtro)
+            print(f'[INFO] {funcao_atual} - Resposta DataSUS: {dict_arquivos}')
 
         return dict_arquivos
 
     except error_perm as e:
         # Logs de erros de caráter permanente (inexistência de diretórios e/ou arquivos)
-        print(f'Falha permanente no servidor FTP: {e}')
+        print(f'[ERROR] {funcao_atual} - Falha permanente no servidor FTP: {e}')
         return None
 
     except error_temp as e:
         # Logs de erros de caráter temporário (instabilidade no servidor)
-        print(f'Falha temporária no servidor FTP: {e}')        
+        print(f'[ERROR] {funcao_atual} - Falha temporária no servidor FTP: {e}')        
         return None
 
     except Exception as e:
         # Logs de error gerais, armazenando a mensagem completa do erro.
-        print(f'Erro: {e}')   
+        print(f'[ERROR] {funcao_atual} - Erro: {e}')   
         return None
 
 
@@ -74,13 +80,15 @@ def mapear_arquivos_bucket(bucket:str) -> dict:
     Returns:
         dict_arquivos(dict): Dicionário com a competência mais recente e a lista de arquivos. 
     '''
-    
-    print(f'Nome do Bucket: {bucket}')
+
+    # Identifica o módulo e função atuais para o Log
+    funcao_atual = 'ingestao/mapear_arquivos_bucket'    
+
     dict_arquivos = {}
 
     # Consulta os arquivos existentes na camada bronze do bucket
     resposta_s3 = s3_client.list_objects_v2(Bucket=bucket, Prefix='bronze/cnes/profissionais/')
-    print(f'Resposta Amazon: {resposta_s3}')
+    print(f'[INFO] {funcao_atual} - Resposta AWS: {resposta_s3}')
     
     if 'Contents' in resposta_s3:
         
@@ -89,6 +97,7 @@ def mapear_arquivos_bucket(bucket:str) -> dict:
 
         # Identifica a competência dos arquivos na camada bronze
         competencia = arquivos_bucket[-1][-8:-4]
+        print(f'[INFO] {funcao_atual} - Competência atual AWS: {competencia}')
 
         # Insere a competência e a lista com o nome dos arquivos no dicionário
         dict_arquivos['competencia'] = int(competencia)
@@ -97,6 +106,8 @@ def mapear_arquivos_bucket(bucket:str) -> dict:
     else:
         dict_arquivos['competencia'] = 0
         dict_arquivos['arquivos'] = []
+
+    print(f'[INFO] {funcao_atual} - Resposta Data Lake: {dict_arquivos}')
 
     return dict_arquivos
 
@@ -111,8 +122,10 @@ def transferir_ftp_para_s3(arquivos:list, bucket:str):
         bucket(str): Nome do bucket de destino no Amazon S3.
     '''
 
-    print(f'Nome do Bucket: {bucket}')
-    print(f'Arquivos para baixar: {arquivos}')
+    # Identifica o módulo e função atuais para o Log
+    funcao_atual = 'ingestao/transferir_ftp_para_s3' 
+
+    print(f'[INFO] {funcao_atual} - Arquivos para transferir: {arquivos}')
 
     # URL base do servidor FTP
     url_ftp = 'ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/PF'
@@ -130,7 +143,7 @@ def transferir_ftp_para_s3(arquivos:list, bucket:str):
             # Cria uma requisição HTTPS para baixar o arquivo
             with urllib.request.urlopen(f'{url_ftp}/{arquivo}') as arquivo_path:
 
-                print(f'Baixando arquivo: {arquivo}')
+                print(f'[INFO] {funcao_atual} - Baixando arquivo: {arquivo}')
 
                 # Nome do arquivo que será armazenado na camada bronze no bucket
                 nome_objeto = f'bronze/cnes/profissionais/{arquivo}'
@@ -141,7 +154,7 @@ def transferir_ftp_para_s3(arquivos:list, bucket:str):
                     Bucket=bucket,
                     Key=nome_objeto
                 )
-                print(f'Download concluído: {arquivo}')
+                print(f'[INFO] {funcao_atual} - Download concluído: {arquivo}')
                 
             # Incrementa a quantidade de downloas realizados
             cont_downloads += 1
@@ -149,13 +162,13 @@ def transferir_ftp_para_s3(arquivos:list, bucket:str):
         except URLError as e:
             # Inclui o nome do arquivo na lista de arquivos que deram erro
             arquivos_erro.append(arquivo)
-            print(f'Não foi possível baixar o arquivo {arquivo}: {e}')
+            print(f'[WARNING] {funcao_atual} - Não foi possível baixar o arquivo {arquivo}: {e}')
             continue
 
-    print(f'Transferência concluída. Arquivos baixados: {cont_downloads}/{len(arquivos)}.')
+    print(f'[INFO] {funcao_atual} - Transferência concluída. Arquivos baixados: {cont_downloads}/{len(arquivos)}.')
 
     if cont_downloads != len(arquivos):
-        print(f'Arquivos não baixados: {arquivos_erro}.')
+        print(f'[INFO] {funcao_atual} - Arquivos não baixados: {arquivos_erro}.')
 
 
 def excluir_arquivos_bucket(arquivos:list, bucket:str):
@@ -167,8 +180,10 @@ def excluir_arquivos_bucket(arquivos:list, bucket:str):
         bucket(str): Nome do bucket de destino no Amazon S3.
     '''
 
-    print(f'Nome do bucket: {bucket}')
-    print(f'Arquivos para deletar: {arquivos}')
+    # Identifica o módulo e função atuais para o Log
+    funcao_atual = 'ingestao/excluir_arquivos_bucket' 
+
+    print(f'[INFO] {funcao_atual} - Arquivos para excluir: {arquivos}')
 
     # Cria uma lista de dicionários dos arquivos a serem excluídos
     arquivos_deletar = [{'Key': arquivo} for arquivo in arquivos]
@@ -182,37 +197,33 @@ def excluir_arquivos_bucket(arquivos:list, bucket:str):
                 'Quiet': True
             }
         )
-        print(f'Arquivos excluídos com sucesso.')
+        print(f'[INFO] {funcao_atual} - Arquivos excluídos com sucesso.')
 
     except ClientError as e:
-        print(f'Erro ao tentar excluir os arquivos: {e}')
+        print(f'[INFO] {funcao_atual} - Erro ao tentar excluir os arquivos: {e}')
 
 
 def lambda_handler(event, context):
-    
-    print(f'Evento: {event}')
-    print(f'Contexto: {context}')
 
-    # # Registros do evento que aciona o lambda
-    # registros_evento = event['Records'][0]['s3']
+    # Identifica o módulo e função atuais para o Log
+    funcao_atual = 'ingestao' 
 
-    # # Nome do bucket e do arquivo que foi carregado
-    # bucket = registros_evento['bucket']['name']
-    # key = registros_evento['object']['key']
-    bucket = 'pipesus'
+    print(f'[INFO] {funcao_atual} - Evento: {event}')
+    print(f'[INFO] {funcao_atual} - Contexto: {context}')
+
+    bucket = os.environ.get('S3_BUCKET_NAME')
+    print(f'[INFO] {funcao_atual} - Bucket S3 selecionado: {bucket}')
 
     # # Dicionário com as competências e os arquivos mais atuais disponibilizados no FTP do DataSUS
     resposta_ftp = mapear_arquivos_ftp()
-    print('Resposta FTP:', resposta_ftp)
 
     # # Dicionário com as competências e os arquivos mais atuais disponibilizados no bucket S3
     resposta_aws = mapear_arquivos_bucket(bucket)
-    print('Resposta AWS:', resposta_aws)
 
     if resposta_aws['competencia'] < resposta_ftp['competencia']:
         
-        print('Os arquivos estão desatualizados na AWS.')
-        print('Iniciando a atualização da base de dados na AWS...')
+        print(f'[INFO] {funcao_atual} - Os arquivos do Data Lake estão desatualizados.')
+        print(f'[INFO] {funcao_atual} - Iniciando a atualização da base de dados no Data Lake...')
 
         if len(resposta_aws['arquivos']) > 0:
             # Exclui todos os arquivos do bucket
@@ -222,7 +233,7 @@ def lambda_handler(event, context):
         transferir_ftp_para_s3(resposta_ftp['arquivos'][:1], bucket)
     
     else:
-        print('A base de dados na AWS já está atualizada.')
+        print(f'[INFO] {funcao_atual} - Os dados do Data Lake já estão atualizados.')
 
     return {
         'statusCode': 200,

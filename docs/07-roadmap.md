@@ -28,17 +28,16 @@ O roadmap está organizado em 6 fases, seguindo o fluxo natural da pipeline de d
 
 ### Fase 1 — Ingestão: FTP DataSUS → S3 Bronze
 
-**Meta:** EventBridge Scheduler e Lambda funcionais, extraindo arquivos `.dbc` do FTP do DataSUS e os depositando-os na camada Bronze com idempotência.
+**Meta:** EventBridge Scheduler e Função Lambda funcionais, extraindo arquivos `.dbc` do FTP do DataSUS e os depositando-os na camada Bronze com idempotência.
 
 | Entrega | Status |
 |---------|--------|
-| `src/lambda/ingestao.py` com a função lambda de ingestão | 🔄 |
-| **Logs** configurados na `src/lambda/ingestao.py` | 🔲 |
-| **EventBridge Scheduler** configurado | 🔲 |
-| `notebooks/01-exploracao-ftp-datasus.ipynb` | 🔲 |
-| Infrastrutura de provisionamento no Terraform (IaC) | 🔲 |
-| `README.md` atualização do andamento do projeto | 🔲 |
+| `src/lambda/ingestao.py` com a função lambda de ingestão | ✅ |
+| **EventBridge Scheduler** configurado | ✅ |
+| `notebooks/01-lambda-ingestao.ipynb` | ✅ |
+| Logs em JSON configurados na `src/lambda/ingestao.py` | 🔄 |
 | `docs/07-roadmap.md` atualização do andamento do projeto | 🔲 |
+| `README.md` atualização do andamento do projeto | 🔲 |
 
 ---
 
