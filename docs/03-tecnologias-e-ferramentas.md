@@ -10,6 +10,7 @@ O **PipeSUS** está sendo desenvolvido utilizando a seguinte *stack*:
     - **AWS Lambda** (Execução orientada a eventos)
     - **AWS Glue** (Orquestração de transformações)
     - **Amazon EventBridge Scheduler** (Agendamento de execução)
+- **Terraform**
 
 > [Próximo - Arquitetura do Projeto >](/docs/04-arquitetura-do-projeto.md)
 

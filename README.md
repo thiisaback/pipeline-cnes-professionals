@@ -6,6 +6,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS%20-FF9900?style=for-the-badge&logo=aws&logoColor=white)
+![Terraform](https://img.shields.io/badge/Terraform%20-FF5100?style=for-the-badge&logo=aws&logoColor=white)
 
 ---
 ## Sobre o PipeSUS
@@ -29,17 +30,17 @@ O **PipeSUS** é uma pipeline de dados com arquitetura *serverless* e orientada 
 
 ## Etapa Atual de Desenvolvimento
 
-### Fase 1 — Ingestão: FTP DataSUS → S3 Bronze
+### Fase 2 — Transformação: Bronze → Staging (.dbc → .parquet)
 
-**Meta:** EventBridge Scheduler e Lambda funcionais, extraindo arquivos `.dbc` do FTP do DataSUS e depositando-os na camada Bronze com idempotência.
+**Meta:** Job Glue acionado por trigger Lambda converte `.dbc` para `.parquet` na camada Staging.
 
 | Entrega | Status |
 |---------|--------|
-| `src/lambda/ingestao.py` com a função lambda de ingestão | ✅ |
-| **EventBridge Scheduler** configurado | ✅ |
-| `notebooks/01-lambda-ingestao.ipynb` | ✅ |
-| Logs em JSON configurados na `src/lambda/ingestao.py` | ✅ |
-| `README.md` e `docs/07-roadmap.md` com a atualização da próxima etapa do projeto | 🔄 |
+| `src/glue/job-conversao-staging.py` com glue job de conversão mockado | 🔄 |
+| `src/lambda/lambda-ingestao.py` iniciando o glue job (trigger) | 🔲 |
+| `notebooks/02-job-conversao-staging.ipynb` | 🔲 |
+| Logs em JSON configurados na `src/glue/job-conversao-staging.py` | 🔲 |
+| `README.md` e `docs/07-roadmap.md` com a atualização da próxima etapa do projeto | 🔲 |
 
 
 ### Legenda

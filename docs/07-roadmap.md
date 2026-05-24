@@ -32,17 +32,25 @@ O roadmap está organizado em 6 fases, seguindo o fluxo natural da pipeline de d
 
 | Entrega | Status |
 |---------|--------|
-| `src/lambda/ingestao.py` com a função lambda de ingestão | ✅ |
+| `src/lambda/lambda-ingestao.py` com a função lambda de ingestão | ✅ |
 | **EventBridge Scheduler** configurado | ✅ |
 | `notebooks/01-lambda-ingestao.ipynb` | ✅ |
 | Logs em JSON configurados na `src/lambda/ingestao.py` | ✅ |
-| `README.md` e `docs/07-roadmap.md` com a atualização da próxima etapa do projeto | 🔄 |
+| `README.md` e `docs/07-roadmap.md` com a atualização da próxima etapa do projeto | ✅ |
 
 ---
 
 ### Fase 2 — Transformação: Bronze → Staging (.dbc → .parquet)
 
 **Meta:** Job Glue acionado por trigger Lambda converte `.dbc` para `.parquet` na camada Staging.
+
+| Entrega | Status |
+|---------|--------|
+| `src/glue/job-conversao-staging.py` com glue job de conversão mockado | 🔄 |
+| `src/lambda/lambda-ingestao.py` iniciando o glue job (trigger) | 🔲 |
+| `notebooks/02-job-conversao-staging.ipynb` | 🔲 |
+| Logs em JSON configurados na `src/glue/job-conversao-staging.py` | 🔲 |
+| `README.md` e `docs/07-roadmap.md` com a atualização da próxima etapa do projeto | 🔲 |
 
 ---
 
@@ -58,9 +66,9 @@ O roadmap está organizado em 6 fases, seguindo o fluxo natural da pipeline de d
 
 ---
 
-### Fase 5 — Observabilidade e CI/CD
+### Fase 5 — Configuração da Infraestrutura com Código (IaC)
 
-**Meta:** Pipeline auditável com logs estruturados, alertas e automação de testes no CI.
+**Meta:** Infraestrutura como código (IaC) configurada no Terraform para criar todos os recursos necessários na AWS.
 
 ---
 
